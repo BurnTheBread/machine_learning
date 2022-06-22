@@ -39,6 +39,7 @@ class Circuit(Sprite):
 
 	def getObservation(self, car, numRaycasts):
 		self.numRaycasts = numRaycasts
+		self.angleBetweenRays = 360 / self.numRaycasts
 		observationPoints = np.zeros((self.numRaycasts, 2))
 		observations = np.zeros(self.numRaycasts)
 		carAngle = car.rigidbody.getRotation()

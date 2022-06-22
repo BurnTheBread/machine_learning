@@ -10,10 +10,11 @@ import time
 class RacingScene:
     def __init__(self):
         self.env = env.RacerEnv()
-        self.car = car.Car(self.env.start_positions[0], "resources/car2.png")
+        self.car = car.Car(self.env.start_positions[0], "resources/car2.png", False)
         self.model = load_model(f"networks/racer-{globals.observation}.h5")
         self.observation = self.env.reset().reshape([1, self.env.n_observations])
         self.startRace = False
+        self.watchMistake = False
         self.timer = 5
         self.previousCountDown = time.time()
         self.countDownText = ui.TextBox(globals.screenWidth/2-350, globals.screenHeight/2-500, str(self.timer), color=(100, 100, 100), width=700)
@@ -27,26 +28,37 @@ class RacingScene:
     def reset(self):
         self.model = load_model(f"networks/racer-{globals.observation}.h5")
         self.observation = self.env.reset().reshape([1, self.env.n_observations])
-        self.car = car.Car(self.env.start_positions[0], "resources/car2.png")
+        self.car = car.Car(self.env.start_positions[0], "resources/car2.png", False)
         self.timer = 5
         self.startRace = False
         self.previousCountDown = time.time()
+        self.watchMistake = False
 
     def update(self):
         if not self.startRace:
             self.countDown()
             return
+
+        if self.watchMistake:
+            self.timer -= time.time() - self.previousCountDown
+            self.previousCountDown = time.time()
+            if self.timer <= 0:
+                globals.currentScene = globals.Scenes.victory
+            return
+
         self.observation, reward, done, info = self.env.step(self.getAction())
         self.observation = np.reshape(self.observation, [1, self.env.n_observations])
         self.car.update(self.car.getAction(), 1/globals.fps)
         if done:
             print("player wins")
             globals.winner = 0
-            globals.currentScene = globals.Scenes.victory
+            self.watchMistake = True
+            self.previousCountDown = time.time()
         if self.env.circuit.isOffTrack(self.car) and not globals.immortal:
             print("AI wins")
             globals.winner = 1
-            globals.currentScene = globals.Scenes.victory
+            self.watchMistake = True
+            self.previousCountDown = time.time()
 
     def draw(self, window):
         self.env.circuit.draw(window)
@@ -63,4 +75,5 @@ class RacingScene:
 
         if self.timer <= 0:
             self.startRace = True
+            self.timer = 3
 

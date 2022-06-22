@@ -3,14 +3,14 @@ from physics import Rigidbody
 from pygame.sprite import Sprite
 
 class Car(Sprite):
-  def __init__(self, car_position, image):
+  def __init__(self, car_position, image, isComputer):
     super().__init__()
-    self.vel = 120
+    self.vel = 200
     self.rigidbody = Rigidbody(car_position.x, car_position.y, self.vel, car_position.angle)
     self.rigidbody.setRotation(car_position.angle)
     self.width = 100
     self.height = 50
-    self.maxRotation = 18
+    self.maxRotation = 10 if isComputer else 5
     self.image = pygame.image.load(image)
     self.image = pygame.transform.scale(self.image, (self.height, self.width))
     self.mask = pygame.mask.from_surface(self.image)
@@ -42,9 +42,6 @@ class Car(Sprite):
       self.rigidbody.rotate(self.maxRotation)
 
   def getAction(self):
-    # if (pygame.key.get_pressed()[pygame.K_UP] or pygame.key.get_pressed()[pygame.K_w]):
-    #   return 0
-
     if (pygame.key.get_pressed()[pygame.K_LEFT] or pygame.key.get_pressed()[pygame.K_a]):
       return 0
     elif (pygame.key.get_pressed()[pygame.K_RIGHT] or pygame.key.get_pressed()[pygame.K_d]):

@@ -84,7 +84,7 @@ class RacerEnv():
 
     def reset(self, index=0):
         self.rewards.reset(self.start_positions[index].lineNumber)
-        self.car = car.Car(self.start_positions[index], "resources/car.png")
+        self.car = car.Car(self.start_positions[index], "resources/car.png", True)
         self.circuit.reset()
         self.steps = 0
         self.n_observations = globals.observation

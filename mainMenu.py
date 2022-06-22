@@ -101,7 +101,7 @@ class nextCircuit(ui.ImageButton):
 
     def pressed(self):
         print("plus")
-        if globals.circuit < 4:
+        if globals.circuit < 3:
             globals.circuit += 1
 
 class previousCircuit(ui.ImageButton):

@@ -23,7 +23,7 @@ def createModel(input_shape, action_space): #returns a netwerk with 3 hidden lay
     return model
 
 
-class DQNAgent:
+class DQL:
     def __init__(self):
         self.env = RacerEnv()
         self.EPISODES = 2000
@@ -55,6 +55,7 @@ class DQNAgent:
         if np.random.random() <= self.epsilon:
             return random.randint(0, 2)
         else:
+            print(np.argmax(self.strategy_network(state, training=False).numpy()))
             act = np.argmax(self.strategy_network(state, training=False).numpy())
             return act
 
